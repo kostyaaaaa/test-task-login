@@ -16,7 +16,7 @@ const login = async ({ email, password }) => {
     const token = generateToken({
       id: user.id,
     });
-    return { token };
+    return token;
   } else {
     throw new RequestError('Password is incorrect', statusCodes.badRequest);
   }
@@ -29,7 +29,7 @@ const signup = async userData => {
     const token = generateToken({
       id: user.id,
     });
-    return { token };
+    return token;
   } catch (err) {
     if (err.name.startsWith('Sequelize')) {
       throw new RequestError(

@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { RequestError } = require('../errors');
 const statusCodes = require('../constants/httpStatusCodes');
+const { EMAIL_VALID_REGEX } = require('../constants/regexp');
 
 const bodyMiddleware = (req, res, next) => {
   if (Object.keys(req.body).length) {
@@ -8,6 +9,19 @@ const bodyMiddleware = (req, res, next) => {
   } else {
     throw new RequestError('Req body is empty', statusCodes.badRequest);
   }
+};
+
+const validationMiddleware = (req, res, next) => {
+  if (!EMAIL_VALID_REGEX.test(String(req.body.email).toLowerCase())) {
+    throw new RequestError('Email is invalid', statusCodes.badRequest);
+  }
+  if (req.body.password.length < 8) {
+    throw new RequestError(
+      'Password is invalid, min length 8',
+      statusCodes.badRequest,
+    );
+  }
+  next();
 };
 
 const tokenMiddleware = (req, res, next) => {
@@ -28,4 +42,5 @@ const tokenMiddleware = (req, res, next) => {
 module.exports = {
   tokenMiddleware,
   bodyMiddleware,
+  validationMiddleware,
 };
